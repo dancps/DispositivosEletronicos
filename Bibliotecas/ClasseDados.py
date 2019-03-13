@@ -134,3 +134,19 @@ class OsciloscopioCSV(object): #Classe criada para ler csv files
         print("The path of this experiment is: "+self.__filePath)
         return(self.__filePath)     
 
+class ResistanceDiode(object):
+    """Modelo com resistencia e diodo em série."""
+    def __init__(self, resistance,vFont,vDiode):
+        super(ResistanceDiode, self).__init__()
+        self.__resistance = float(resistance)
+        self.__vFont = vFont
+        self.__vDiode = vDiode
+        self.__iDiode = []
+        for i in range(0,len(self.__vDiode)):
+            self.__iDiode.append((self.__vFont[i]-self.__vDiode[i])/self.__resistance)
+    def GetCurrent(self):
+        return self.__iDiode
+    def GetCaracteristicCurve(self):
+        return(self.__vDiode,self.__iDiode)
+
+        
