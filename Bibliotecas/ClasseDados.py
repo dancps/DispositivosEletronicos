@@ -83,15 +83,40 @@ class OsciloscopioCSV(object): #Classe criada para ler csv files
         print("The maximum value of channel {:d} ocurrs in {:.2e} seconds and is {:.2e}V.".format(source,time,maxVoltage))
         return (time,maxVoltage)
 
-    def GetMinVoltage(self,source):
+    def GetMinVoltage(self,source,tIni=None,tFin=None):
         """Returns the minimum voltage of a channel"""
-        minVoltage=self.__data[source][0]
-        time = None
-        for i in range(0,len(self.__data[source])):
-            if(self.__data[source][i]<minVoltage):
-                minVoltage=self.__data[source][i]
-                time=self.__data[0][i]
-        print("The minimum value of channel {:d} ocurrs in {:.2e} seconds and is {:.2e}V.".format(source,time,minVoltage))
+        if(tIni==None and tFin==None):
+            minVoltage=self.__data[source][0] # Gets an sample(initial one)
+            time = None
+            for i in range(0,len(self.__data[source])):
+                if(self.__data[source][i]<minVoltage):
+                    minVoltage=self.__data[source][i]
+                    time=self.__data[0][i]
+            print("The minimum value of channel {:d} ocurrs in {:.2e} seconds and is {:.2e}V.".format(source,time,minVoltage))
+        elif(tIni>tFin or tIni==tFin):
+            print("(E)  GetMinVoltage: The vaule of interval [{:.2f}:{:.2f}] is invalid.".format(tIni,tFin))
+            exit()
+        else:
+            # Assim como em GetTime
+            # pra implementar é necessario ter algum algoritmo que aproxima o valor de tempo
+            # ex: GetVoltage(1,1)
+            #     aqui ele pegaria o tempo em 1 segundo mas dependendo dos intervalos colocados na leitura talvez haja 0.99s e 1.01s
+            #     Como ele decidiria qual amostra usar?
+            '''
+            minIndex = float(self.__data[0].index(tIni))
+            maxIndex = float(self.__data[0].index(tFin))
+            minVoltage=self.__data[source][minIndex]
+            time = None
+            for i in range(minIndex,maxIndex+1):
+                if(self.__data[source][i]<minVoltage):
+                    minVoltage=self.__data[source][i]
+                    time=self.__data[0][i]
+            print("The minimum value of channel {:d} ocurrs in {:.2e} seconds and is {:.2e}V.".format(source,time,minVoltage))
+            '''
+            
+            print("(E)  GetMinVoltage: Function not implemented yet.")
+            exit()
+
         return (time,minVoltage)
 
     def GetPeaks(self,source):
