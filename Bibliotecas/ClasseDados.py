@@ -174,4 +174,75 @@ class ResistanceDiode(object):
     def GetCaracteristicCurve(self):
         return(self.__vDiode,self.__iDiode)
 
+class MultisimCSV(object): #Classe criada para ler csv files
+    """Dados obtidos a partir de um arquivo csv.
         
+        Fonte pra aprender docstring:
+            https://www.datacamp.com/community/tutorials/docstrings-python
+            https://www.pythonforbeginners.com/basics/python-docstrings
+            https://www.geeksforgeeks.org/python-docstrings/
+    """
+    def __init__(self, filePath):
+    #   super(OsciloscopioCSV, self).__init__()
+        #https://pt.stackoverflow.com/questions/22452/como-se-usa-e-para-que-serve-o-super-em-classes-python
+        self.__filePath = filePath
+        self.__inputCSV = open(filePath)
+        self.__lines=[]
+
+        # Le a primeira linha
+        #  Como a primeira linha é o cabeçalho do arquivo csv
+        #  ele apresenta quantos canais foram usados no osciloscópio
+        #  (em numero de colunas) 
+        self.__nChannels = (self.__inputCSV.readline()).count(",,")+1
+
+
+        
+
+        # # # Implementar algo que leia a segunda linha. Responsável por 
+        # # # dar a unidade.
+
+        # Le cada linha do arquivo csv, separa os espaços entre virgulas
+        # e armazena em uma variavel
+        for line in self.__inputCSV:
+            self.__lines.append(line.strip("\n"))
+
+
+        self.__data=[] # Inicializa variavel que guarda o set de dados
+
+        # Inicializa arrays dentro da array principal
+        #   Feito pra que seja 
+        for i in range(0,2*self.__nChannels+self.__nChannels-1):
+            self.__data.append([])
+        for num_line in range(1,len(self.__lines)): # inicia em 1 pois as primeira linha é apenas um cabecalho
+            for i in range(0,2*self.__nChannels+self.__nChannels-1):
+                if(len(self.__lines[num_line].split(",")[i])!=0):
+                    self.__data[i].append(float(self.__lines[num_line].split(",")[i]))
+                else:
+                    self.__data[i].append((self.__lines[num_line].split(",")[i]))
+        
+        # A partir daqui o codigo remove as 
+        indexes_to_remove=[]
+        for i in range(0,len(self.__data)):
+            if(len(str(self.__data[i][0]))==0):
+                indexes_to_remove.append(i)
+        for i in range(0,len(indexes_to_remove)):
+            indexes_to_remove[i]=indexes_to_remove[i]-i
+            self.__data.pop(indexes_to_remove[i])
+
+    def GetNChannels(self):
+        """Returns the number of channels of the csv files"""
+        print("GetNChannels = " + str(self.__nChannels))
+        return self.__nChannels
+        
+    def GetRawChannelArray(self,source):
+        """ TODO """
+        return self.__data[source]
+
+
+    def GetChannel(self,source):
+        """ TODO """
+        return [self.__data[2*source],self.__data[2*source+1]]
+
+    def GetSourcePath(self):
+        print("The path of this experiment is: "+self.__filePath)
+        return(self.__filePath) 
